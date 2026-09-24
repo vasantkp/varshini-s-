@@ -1,0 +1,39 @@
+#include <string.h>
+#include <stdbool.h>
+int expressiveWords(char* s, char** words, int wordsSize) {
+    int stretchy_count = 0;
+    int s_len = strlen(s);
+    for (int w = 0; w < wordsSize; w++) {
+        char* word = words[w];
+        int w_len = strlen(word);
+        int i = 0; 
+        int j = 0; 
+        bool is_valid = true;
+        while (i < s_len && j < w_len) {
+            if (s[i] != word[j]) {
+                is_valid = false;
+                break;
+            }
+            char target_char = s[i];
+            int s_group_size = 0;
+            int w_group_size = 0;
+            while (i < s_len && s[i] == target_char) {
+                s_group_size++;
+                i++;
+            }
+            while (j < w_len && word[j] == target_char) {
+                w_group_size++;
+                j++;
+            }
+            if (w_group_size > s_group_size || (w_group_size < s_group_size && s_group_size < 3)) {
+                is_valid = false;
+                break;
+            }
+        }
+        if (is_valid && i == s_len && j == w_len) {
+            stretchy_count++;
+        }
+    }
+
+    return stretchy_count;
+}
