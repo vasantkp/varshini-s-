@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+int mergeSortAndCount(long long* sums, int start, int end, int lower, int upper) {
+    if (end - start <= 1) {
+        return 0;
+    }
+    int mid = start + (end - start) / 2;
+    int count = mergeSortAndCount(sums, start, mid, lower, upper) + 
+                mergeSortAndCount(sums, mid, end, lower, upper);
+    int j = mid, k = mid, r = mid;
+    long long* cache = (long long*)malloc((end - start) * sizeof(long long));
+    int cacheIdx = 0;
+    for (int i = start; i < mid; i++) {
+        while (j < end && sums[j] - sums[i] < lower) {
+            j++;
+        }
+        while (k < end && sums[k] - sums[i] <= upper) {
+            k++;
+        }
+        while (r < end && sums[r] < sums[i]) {
+            cache[cacheIdx++] = sums[r++];
+        }
+        
+        cache[cacheIdx++] = sums[i];
+        count += (k - j);
+    }
+    while (r < end) {
+        cache[cacheIdx++] = sums[r++];
+    }
+    for (int i = 0; i < cacheIdx; i++) {
+        sums[start + i] = cache[i];
+    }
+    
+    free(cache);
+    return count;
+}
+int countRangeSum(int* nums, int numsSize, int lower, int upper) {
+    if (nums == NULL || numsSize == 0) {
+        return 0;
+    }
+    long long* sums = (long long*)malloc((numsSize + 1) * sizeof(long long));
+    sums[0] = 0;
+    for (int i = 0; i < numsSize; i++) {
+        sums[i + 1] = sums[i] + nums[i];
+    }
+    
+    int totalCount = mergeSortAndCount(sums, 0, numsSize + 1, lower, upper);
+    
+    free(sums);
+    return totalCount;
+}
