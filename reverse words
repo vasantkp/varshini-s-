@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+void reverse(char* start, char* end) {
+    while (start < end) {
+        char temp = *start;
+        *start = *end;
+        *end = temp;
+        start++;
+        end--;
+    }
+}
+
+char* reverseWords(char* s) {
+    if (s == NULL) return NULL;
+
+    int len = strlen(s);
+    reverse(s, s + len - 1);
+
+    int writeIdx = 0;
+    int i = 0;
+    while (i < len) {
+        while (i < len && s[i] == ' ') {
+            i++;
+        }
+
+        if (i == len) break; 
+        if (writeIdx > 0) {
+            s[writeIdx++] = ' ';
+        }
+        int wordStart = writeIdx;
+        while (i < len && s[i] != ' ') {
+            s[writeIdx++] = s[i++];
+        }
+        reverse(s + wordStart, s + writeIdx - 1);
+    }
+    s[writeIdx] = '\0';
+
+    return s;
+}
